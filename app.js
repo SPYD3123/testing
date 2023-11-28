@@ -92,6 +92,7 @@ function creategrid() {
         tile.addEventListener('touchstart', handleTouchStart);
         tile.addEventListener('touchend', handleTouchEnd);
         tile.addEventListener('touchmove', handleTouchMove);
+        tile.addEventListener('dragstart', (e) => e.preventDefault());
         grid.appendChild(tile);
     }
 }
@@ -203,7 +204,7 @@ function pattern() {
 
 function animation(e) {
     if (currentAnimation == 'on') {
-        e.target.style.transition = 'all 0.3s';
+        e.target.style.transition = 'all 0.8s';
     }
 }
 
