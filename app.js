@@ -81,28 +81,51 @@ document.body.onmouseup = () => (mouseDown = false)
 
 // ... (your existing code)
 
+let touchHoldTimer;
+
 function creategrid() {
     grid.style.cssText = `grid-template-columns:repeat(${currentsize},auto);`
     for (let i = 0; i < currentsize * currentsize; i++) {
         let tile = document.createElement('div');
         tile.classList.add('tiles');
         tile.addEventListener('mouseover', changecolor);
-        tile.addEventListener('touchstart', changecolor);
-        tile.addEventListener('touchend', changecolorTouchEnd);
-        tile.addEventListener('touchmove', changecolorTouchMove);
+        tile.addEventListener('touchstart', handleTouchStart);
+        tile.addEventListener('touchend', handleTouchEnd);
+        tile.addEventListener('touchmove', handleTouchMove);
         grid.appendChild(tile);
     }
 }
 
-function changecolorTouchEnd(e) {
+function handleTouchStart(e) {
     e.preventDefault();
-    // Additional logic if needed
+    if (currentpentype === 'hover') {
+        changecolor(e);
+    } else if (currentpentype === 'drag') {
+        touchHoldTimer = setTimeout(() => {
+            mouseDown = true;
+            changecolor(e);
+        }, 500); // Set your desired hold duration
+    }
 }
 
-function changecolorTouchMove(e) {
+function handleTouchEnd(e) {
     e.preventDefault();
-    const touch = e.changedTouches[0];
-    changecolor(touch);
+    clearTimeout(touchHoldTimer);
+    if (currentpentype === 'drag' && mouseDown) {
+        mouseDown = false;
+        // Additional logic if needed
+    }
+}
+
+function handleTouchMove(e) {
+    e.preventDefault();
+
+    const touch = e.touches[0];
+    const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+
+    if (targetElement && targetElement.classList.contains('tiles')) {
+        changecolor({ target: targetElement });
+    }
 }
 
 // ... (your existing code)
@@ -129,22 +152,21 @@ function changecolor(e) {
         animation(e);
         
         if (e.target.style.backgroundColor.match(new RegExp(`rgba\\(${r}, ${g}, ${b}`))) {
-
             let currentOpacity = Number(e.target.style.backgroundColor.slice(-4, -1));
             if (currentOpacity <= 0.96 ) {
                 e.target.style.backgroundColor = `rgba(${r},${g},${b}, ${currentOpacity + 0.12})`;
-                e.target.classList.add('gray')
+                e.target.classList.add('gray');
             }
-        }
-        else {
-            if ( this.style.backgroundColor==`rgb(${r}, ${g}, ${b})` && (this.classList[1]=='gray' || this.classList[2]=='gray') ){
-                e.target.style.backgroundColor=`rgb(${r},${g},${b})`;
-            }
-            else{
+        } else {
+            if (e.target.style.backgroundColor == `rgb(${r}, ${g}, ${b})` &&
+                (e.target.classList[1] == 'gray' || e.target.classList[2] == 'gray')) {
+                e.target.style.backgroundColor = `rgb(${r},${g},${b})`;
+            } else {
                 e.target.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.12)`;
             }
         }
     }
+
     else if (currentpenmode == 'erase') {
         // e.target.classList.remove
         animation(e);
