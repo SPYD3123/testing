@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>pixel sketch</title>
+</head>
+<body>
+    <div class="main">
+        <div class="grid-settings">
+            <div class="heading"><h1>Pixel Sketch</h1></div>
+            <input type="color" value="#333333" name="" id="colorpicker">
+            <button id="colorbutton" value="color" class="buttons btnactive">Color Mode</button>
+            <button id="rainbow" value="rainbow" class="buttons">Rainbow</button>
+            <button id="shade" value="grayscale" class="buttons">Shade</button>
+            <button id="erase" value="erase" class="buttons">Erase</button>
+            <button id="clears" value="clear" class="buttons">Clear</button>
+            <div class="content">
+                <div class="range">
+                  <input type="range" min="1" max="100" value="16" id="range2" class="range-input" /> 
+                  <div class="value2">16x16</div>
+                </div>
+            </div>  
+            <div class="btn-container">
+                <div class="btn-txt">Grid Pattern</div>
+                <label class="switch">
+                    <input type="checkbox" id="pattern" value="patterned">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="btn-container">
+                <div class="btn-txt">Penmode Hold&Drag</div>
+                <label class="switch">
+                    <input type="checkbox" id="pentype" value="drag">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="btn-container">
+                <div class="btn-txt">Draw Animations</div>
+                <label class="switch">
+                    <input type="checkbox" id="animations" value="on" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            
+        </div>
+        <div class="grids">
+            <div class="mid" id="midss">
+            </div>
+            <div>
+                <input type="button" id="btn_convert" value="Download">
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+    <script src="/js/html2canvas.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let downloadbutton = document.getElementById('btn_convert');
+            downloadbutton.addEventListener('click', function () {
+                html2canvas(document.getElementById('midss')).then(function (canvas) {
+                    var anchortag = document.createElement('a');
+                    document.body.appendChild(anchortag);
+                    anchortag.download = "Drawing.jpg";
+                    anchortag.href = canvas.toDataURL();
+                    anchortag.target = '_blank';
+                    anchortag.click();
+                    document.body.removeChild(anchortag);
+                })
+            });
+        });
+    </script>
+    
+</body>
+</html>
